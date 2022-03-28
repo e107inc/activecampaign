@@ -1,15 +1,12 @@
 <?php
 require_once("../../class2.php");
-require_once("vendor/autoload.php");
-use ActiveCampaign;
-
 $acPref = e107::pref('activecampaign');
+require_once('acHelper.php');
 
 if(empty($acPref['api_url']) || empty($acPref['api_key']))
 {
 	echo "<div class='alert alert-danger'>Misconfigured API</div>";
 	exit;
-
 }
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST")
@@ -18,15 +15,13 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST")
 }
 
 
-$listid = 1;
-
-$ac = new ActiveCampaign($acPref['api_url'], $acPref['api_key']);
-$result = (int) $ac->credentials_test();
-
-if(!$result)
+if(!$test = acHelper::test())
 {
-	echo "System misconfigured. Contact Administrator";
+	echo "<div class='alert alert-danger'>Sorry, there is a problem on our end. Please try again later.</div>";
+	exit;
+
 }
+
 
 if(empty($_POST["first_name"]))
 {
@@ -45,11 +40,12 @@ if(empty($_POST["email"]))
 }
 $tp = e107::getParser();
 
-$save = [];
+$listid = 1; // default list number to subscribe to.
 
-$save["first_name"] = $tp->filter($_POST['first_name']);
-$save["last_name"]  = $tp->filter($_POST['last_name']);
-$save["email"]      = filter_input(INPUT_POST,'email',FILTER_SANITIZE_EMAIL);
+$save = [];
+$save["first_name"] = $_POST['first_name'];
+$save["last_name"]  = $_POST['last_name'];
+$save["email"]      = $_POST['email'];
 $save["p"]          = array($listid => $listid);
 $save["status"]     = array($listid => 1);
 $save["instantresponders"] = array($listid => 1);
@@ -59,12 +55,7 @@ if(!empty($acPref['tags']))
 	$save['tags'] = explode(',',$acPref['tags']);
 }
 
-
-
-// Need to add a custom field value? Include it below.
-//$_POST["field"] = array("%PERS_1%,0" => "Custom field value");
-/** @var  $response */
-$response = $ac->api("contact/sync", $save);
+$response = acHelper::addContact($save);
 
 if($response->success)
 {
@@ -75,11 +66,7 @@ else
 	echo "<div class='alert alert-danger'>".$response->result_message."</div>";
 }
 
-if(getperms('0') && deftrue('e_DEBUG'))
-{
-	echo "Debug (visible only to you): ";
-	$ac->dbg($response);
-}
+
 
 
 
