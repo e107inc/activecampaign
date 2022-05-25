@@ -75,4 +75,14 @@ class acHelper
 		return $response;
 	}
 
+	public static function getTracking()
+	{
+		$ac = self::connect();
+		/** @var  $response */
+		$response = $ac->api('tracking/site_status');
+		//var_dump($response);
+	}
+
+
+
 }

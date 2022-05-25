@@ -9,8 +9,7 @@ if (!getperms('P'))
 	exit;
 }
 
-require_once("./vendor/autoload.php");
-use ActiveCampaign;
+require_once(__DIR__."/acHelper.php");
 // e107::lan('activecampaign',true);
 
 
@@ -93,7 +92,7 @@ class activecampaign_ui extends e_admin_ui
 		public function init()
 		{
 
-
+			//acHelper::getTracking();
 	
 		}
 
@@ -149,8 +148,7 @@ class activecampaign_ui extends e_admin_ui
 
 			if(!empty($pref['api_url']) && !empty($pref['api_key']))
 			{
-				$ac = new ActiveCampaign($pref['api_url'], $pref['api_key']);
-				$result = (int) $ac->credentials_test();
+				$result = acHelper::test();
 
 				if($result)
 				{

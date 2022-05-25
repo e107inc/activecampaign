@@ -11,7 +11,19 @@
  */
 
 
+
+
 if (!defined('e107_INIT')) { exit; }
+
+if(!e107::isInstalled('activecampaign'))
+{
+	return null;
+}
+/*
+if(!ADMIN)
+{
+	return null;
+}*/
 
 /*
 if(!empty($parm) )

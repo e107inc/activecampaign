@@ -59,7 +59,8 @@ $response = acHelper::addContact($save);
 
 if($response->success)
 {
-	echo "<div class='alert alert-success'>Almost done! Please check your email inbox to confirm your subscription with <b>".$save['email']."</b></div>";
+	echo "<div class='alert alert-success'>All done!</b></div>";
+//	echo "<div class='alert alert-success'>Almost done! Please check your email inbox to confirm your subscription with <b>".$save['email']."</b></div>";
 }
 else
 {
